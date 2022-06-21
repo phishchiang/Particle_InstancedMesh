@@ -97,17 +97,17 @@ export default class Sketch {
     let plarticleGeo = new THREE.PlaneBufferGeometry();
     let geo = new THREE.InstancedBufferGeometry();
     let particle_count = 10000;
-    geo.setAttribute('position', plarticleGeo.getAttribute('position'));
+    geo.setAttribute('each_instance_position', plarticleGeo.getAttribute('position'));
     geo.index = plarticleGeo.index;
 
-    let pos = new Float32Array(particle_count * 3);
+    let instance_position = new Float32Array(particle_count * 3);
 
     for (let i = 0; i < particle_count; i++) {
       const i3 = i * 3;
       const x = (Math.random() - 0.5) * 5.5;
       const y = (Math.random() - 0.5) * 5.5;
       const z = (Math.random() - 0.5) * 5.5;
-      pos.set([x, y, z], i3);
+      instance_position.set([x, y, z], i3);
 
       
       // // 2 way to assign each data
@@ -116,7 +116,7 @@ export default class Sketch {
       // pos[i3 + 2] = (Math.random() - 0.5) * 0.5;
       
     }
-    geo.setAttribute('pos', new THREE.InstancedBufferAttribute(pos, 3, false));
+    geo.setAttribute('instance_position', new THREE.InstancedBufferAttribute(instance_position, 3, false));
 
     console.log(geo);
 
