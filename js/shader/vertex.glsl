@@ -12,13 +12,11 @@ varying vec3 vPosition;
 void main() {
   vUv = uv;
 
-  vec4 particle_position = (modelMatrix * vec4(pos * progress, 1.0)); // * change the size of the whole
+  vec4 particle_position = modelMatrix * vec4(pos, 1.0); // * change the size of the whole
 
-  vec4 view_pos = viewMatrix * particle_position;
+  vec4 view_position = viewMatrix * particle_position + vec4(position, 1.0) * 0.1; // * change the size of each particle
 
-  view_pos = view_pos + vec4(position, 1.0) * 0.1; // * change the size of each particle
-
-  gl_Position = projectionMatrix * view_pos;
+  gl_Position = projectionMatrix * view_position;
 
   // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( instancePosi, 1.0 );
 }
