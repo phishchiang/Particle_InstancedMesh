@@ -104,9 +104,9 @@ export default class Sketch {
 
     for (let i = 0; i < particle_count; i++) {
       const i3 = i * 3;
-      const x = (Math.random() - 0.5) * 0.5;
-      const y = (Math.random() - 0.5) * 0.5;
-      const z = (Math.random() - 0.5) * 0.5;
+      const x = (Math.random() - 0.5) * 5.5;
+      const y = (Math.random() - 0.5) * 5.5;
+      const z = (Math.random() - 0.5) * 5.5;
       pos.set([x, y, z], i3);
 
       
