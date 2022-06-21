@@ -14,11 +14,13 @@ void main() {
 
   // vec3 instancePosi = each_instance_position * 0.1 + instance_position; // position is from PlaneBufferGeo
 
-  vec4 particle_position = modelMatrix * vec4(instance_position, 1.0); // * change the size of the whole
+  // vec4 particle_position = modelMatrix * vec4(instance_position, 1.0); // * change the size of the whole
 
-  vec4 view_position = viewMatrix * particle_position + vec4(each_instance_position, 1.0) * 0.1; // * change the size of each particle
+  // vec4 view_position = viewMatrix * particle_position + vec4(each_instance_position, 1.0) * 0.1; // * change the size of each particle
 
-  gl_Position = projectionMatrix * view_position; // Facing to the camera
+  // Facing Camera
+  gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(instance_position, 1.0) + vec4(each_instance_position, 1.0);
 
-  // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4( instance_position + each_instance_position * 0.1, 1.0 ); // Facing the same direction
+  // // Facing the Same direction as Buffer Geometry
+  // gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(instance_position + each_instance_position, 1.0 ); 
 }

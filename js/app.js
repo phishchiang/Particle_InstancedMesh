@@ -94,7 +94,7 @@ export default class Sketch {
   addObjects() {
     let that = this;
 
-    let plarticleGeo = new THREE.PlaneBufferGeometry();
+    let plarticleGeo = new THREE.PlaneBufferGeometry(0.1, 0.1);
     let geo = new THREE.InstancedBufferGeometry();
     let particle_count = 10000;
     geo.setAttribute('each_instance_position', plarticleGeo.getAttribute('position'));
