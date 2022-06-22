@@ -5,8 +5,11 @@ import fragment from "./shader/fragment.glsl";
 import vertex from "./shader/vertex.glsl";
 import * as dat from "dat.gui";
 import gsap from "gsap";
+import particle_texture from "../img/particle.jpg";
 
-
+function lerp(a, b, t){
+  return a * (1-t) + b * t;
+}
 
 export default class Sketch {
   constructor(options) {
@@ -35,7 +38,7 @@ export default class Sketch {
     // var frustumSize = 10;
     // var aspect = window.innerWidth / window.innerHeight;
     // this.camera = new THREE.OrthographicCamera( frustumSize * aspect / - 2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / - 2, -1000, 1000 );
-    this.camera.position.set(0, 0, 5);
+    this.camera.position.set(0, 3, 5);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.time = 0;
@@ -94,9 +97,11 @@ export default class Sketch {
   addObjects() {
     let that = this;
 
-    let plarticleGeo = new THREE.PlaneBufferGeometry(0.1, 0.1);
+    let plarticleGeo = new THREE.PlaneBufferGeometry(1, 1);
     let geo = new THREE.InstancedBufferGeometry();
     let particle_count = 10000;
+    let min_radius = 0.5;
+    let max_radius = 2;
     geo.setAttribute('each_instance_position', plarticleGeo.getAttribute('position'));
     geo.index = plarticleGeo.index;
 
@@ -104,9 +109,11 @@ export default class Sketch {
 
     for (let i = 0; i < particle_count; i++) {
       const i3 = i * 3;
-      const x = (Math.random() - 0.5) * 5.5;
-      const y = (Math.random() - 0.5) * 5.5;
-      const z = (Math.random() - 0.5) * 5.5;
+      let theta = Math.random() * 2 * Math.PI;
+      let r = lerp(min_radius, max_radius, Math.random());
+      const x = r * Math.sin(theta);
+      const y = (Math.random() - 0.5) * 0.5;
+      const z = r * Math.cos(theta);
       instance_position.set([x, y, z], i3);
 
       
@@ -127,12 +134,14 @@ export default class Sketch {
       side: THREE.DoubleSide,
       uniforms: {
         time: { value: 0 },
+        u_particle_texture: { value: new THREE.TextureLoader().load(particle_texture) },
         progress: { value: 0.6 },
         resolution: { value: new THREE.Vector4() },
       },
+      transparent:true,
       // wireframe: true,
-      // transparent: true,
       vertexShader: vertex,
+      depthTest : false,
       fragmentShader: fragment
     });
 
