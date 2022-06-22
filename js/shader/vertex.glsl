@@ -5,6 +5,7 @@ attribute vec3 each_instance_position; // (positioin)
 uniform float time;
 uniform vec2 pixels;
 uniform float progress;
+uniform vec3 u_mouse;
 
 varying vec2 vUv;
 varying vec3 vPosition;
@@ -117,8 +118,8 @@ vec3 fbm_vec3(vec3 p, float frequency, float offset){
 }
 
 vec3 getOffset(vec3 P){
-  // float twist_scale = cnoise(instance_position) * 0.5 + 0.5;
-  // vec3 temp_pos = rotate(P, vec3(0.0, 1.0, 0.0), time * (0.1 + 0.5 * twist_scale + length(instance_position.xy)));
+  float twist_scale = cnoise(instance_position) * 0.5 + 0.5;
+  vec3 temp_pos = rotate(P, vec3(0.0, 1.0, 0.0), time * (0.1 + 0.5 * twist_scale + length(instance_position.xy)));
   vec3 offset = fbm_vec3(instance_position, 0.5, 1.0);
   return offset * 0.2;
 }
@@ -134,6 +135,15 @@ void main() {
   
 
   vec4 particle_position = modelMatrix * vec4(world_position + offset, 1.0); // * change the size of the whole
+
+
+  // Here to add mouse event
+  float distanceToMouse = pow(1.0 - clamp(length(u_mouse.xz - particle_position.xz) - 0.3, 0.0, 1.0), 4.0);
+
+  vec3 dir = particle_position.xyz - u_mouse;
+  particle_position.xyz = mix(particle_position.xyz, u_mouse + normalize(dir) * 0.08, distanceToMouse);
+
+  // particle_position.y += distanceToMouse * 0.3;
 
   vec4 view_position = viewMatrix * particle_position + vec4(each_instance_position, 1.0) * 0.1 * particle_size; // * change the size of each particle
 

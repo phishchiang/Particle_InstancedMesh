@@ -27,6 +27,10 @@ export default class Sketch {
     this.count = 0;
     this.container.appendChild(this.renderer.domElement);
 
+    this.raycaster = new THREE.Raycaster();
+    this.pointer = new THREE.Vector2();
+    this.point = new THREE.Vector3();
+
     this.camera = new THREE.PerspectiveCamera(
       70,
       window.innerWidth / window.innerHeight,
@@ -46,10 +50,43 @@ export default class Sketch {
     this.isPlaying = true;
 
     this.addObjects();
+    this.raycasterEvent();
     this.resize();
     this.render();
     this.setupResize();
     this.settings();
+  }
+
+  raycasterEvent(){
+
+    let mesh = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(10, 10, 10, 10).rotateX(-Math.PI/2),
+      new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}),
+    );
+
+    let test = new THREE.Mesh(
+      new THREE.SphereBufferGeometry(0.3, 10, 10),
+      new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true}),
+    );
+
+
+    // this.scene.add(test);
+
+    window.addEventListener( 'pointermove', (event)=>{
+      this.pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+      this.pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      // update the picking ray with the camera and pointer position
+      this.raycaster.setFromCamera( this.pointer, this.camera );
+
+      // calculate objects intersecting the picking ray
+      const intersects = this.raycaster.intersectObjects([mesh]);
+      if(intersects[0]){
+        console.log(intersects[0].point);
+        test.position.copy(intersects[0].point);
+        this.point.copy(intersects[0].point);
+      }
+    });
   }
 
   settings() {
@@ -134,6 +171,7 @@ export default class Sketch {
       side: THREE.DoubleSide,
       uniforms: {
         time: { value: 0 },
+        u_mouse: { value: new THREE.Vector3() },
         u_particle_texture: { value: new THREE.TextureLoader().load(particle_texture) },
         progress: { value: 0.6 },
         resolution: { value: new THREE.Vector4() },
@@ -170,6 +208,7 @@ export default class Sketch {
     if (!this.isPlaying) return;
     this.time += 0.05;
     this.material.uniforms.time.value = this.time;
+    this.material.uniforms.u_mouse.value = this.point;
     this.material.uniforms.progress.value = this.settings.progress;
 
 
