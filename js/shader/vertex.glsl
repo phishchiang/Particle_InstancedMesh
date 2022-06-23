@@ -138,12 +138,20 @@ void main() {
 
 
   // Here to add mouse event
-  float distanceToMouse = pow(1.0 - clamp(length(u_mouse.xz - particle_position.xz) - 0.3, 0.0, 1.0), 4.0);
+  vec3 direction = particle_position.xyz - u_mouse;
 
-  vec3 dir = particle_position.xyz - u_mouse;
-  particle_position.xyz = mix(particle_position.xyz, u_mouse + normalize(dir) * 0.08, distanceToMouse);
+  float dist_to_mouse = length(u_mouse.xz - particle_position.xz) - 0.3;
+  dist_to_mouse = 1.0 - clamp(dist_to_mouse, 0.0, 1.0);
+  dist_to_mouse = pow(dist_to_mouse, 4.0);
 
-  // particle_position.y += distanceToMouse * 0.3;
+  // 1st way for distortion
+  particle_position.xyz = particle_position.xyz + direction * dist_to_mouse * -1.0;
+
+  // 2nd way for distortion
+  // particle_position.xyz = mix(particle_position.xyz, u_mouse + normalize(direction) * 0.08, dist_to_mouse);
+
+
+  // particle_position.y += dist_to_mouse * 0.3;
 
   vec4 view_position = viewMatrix * particle_position + vec4(each_instance_position, 1.0) * 0.1 * particle_size; // * change the size of each particle
 
